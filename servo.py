@@ -1,6 +1,9 @@
 import Adafruit_BBIO.PWM as PWM
 import time
 
+# Use this to run a servo from a BeagleBone
+# jcarthew@ford.com
+
 class Servo():
     def __init__(self, pin, duty_min=3, duty_max=14.5, speed=50):
         self.pin = pin
