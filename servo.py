@@ -2,12 +2,19 @@ import Adafruit_BBIO.PWM as PWM
 import time
 
 class Servo():
-    def __init__(self, pin, duty_min=3, duty_max=14.5):
+    def __init__(self, pin, duty_min=3, duty_max=14.5, speed=50):
         self.pin = pin
         self.duty_min = duty_min
         self.duty_max = duty_max
         self.duty_span = duty_max - duty_min
         self.active = False
+        self.speed = speed
+
+    def run(self):
+        self.start()
+        duty = 100 - ((float(self.speed) / 180) * self.duty_span + self.duty_min)
+        PWM.set_duty_cycle(self.pin, duty)
+
 
     def start(self):
         if self.active is False:
