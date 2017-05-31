@@ -22,7 +22,7 @@ class Stepper():
     def zero(self):
         self.angle = 0.0
 
-    def move_to_angle(self, angle):
+    def rotate_an_arbitrary_angle(self, angle):
         # this could be smarter but is it worth the effort?
         angular_resolution = 360.0 / self.stpr_steps
         step_count = math.abs(angle / angular_resolution)
