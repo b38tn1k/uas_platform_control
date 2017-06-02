@@ -23,7 +23,7 @@ class Button():
         self.pin = pin
         GPIO.setup("P8_12", GPIO.IN)
 
-    def button_is_down(self):
+    def is_down(self):
         status =  GPIO.input(self.pin) 
         return(bool(status))
 

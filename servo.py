@@ -5,7 +5,7 @@ import time
 # jcarthew@ford.com
 
 class Servo():
-    def __init__(self, pin, duty_min=3, duty_max=14.5, speed=50):
+    def __init__(self, pin="P8_13", duty_min=3, duty_max=14.5, speed=50):
         self.pin = pin
         self.duty_min = duty_min
         self.duty_max = duty_max
@@ -14,12 +14,12 @@ class Servo():
         self.speed = speed
 
     def run(self):
-        self.start()
+        self.setup()
         duty = 100 - ((float(self.speed) / 180) * self.duty_span + self.duty_min)
         PWM.set_duty_cycle(self.pin, duty)
 
 
-    def start(self):
+    def setup(self):
         if self.active is False:
             PWM.start(self.pin, (100 - self.duty_min), 60.0)
             self.active = True

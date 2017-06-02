@@ -15,6 +15,8 @@ class Stepper():
         self.active = False
         self.forwards = True
         self.angle = 0.0
+        self.resolution = 360/steps
+        self.angle = 0.0
 
     def set_rpm(self, rpm):
         self.period = 60.0 / (self.stpr_steps * rpm)
@@ -25,8 +27,8 @@ class Stepper():
     def rotate_an_arbitrary_angle(self, angle):
         # this could be smarter but is it worth the effort?
         angular_resolution = 360.0 / self.stpr_steps
-        step_count = math.abs(angle / angular_resolution)
-        for i in range(step_count):
+        step_count = math.ceil(angle / angular_resolution)
+        for i in range(int(step_count)):
             self.step()
 
     def setup(self):
@@ -39,9 +41,11 @@ class Stepper():
     def step(self):
         if self.active:
             if self.forwards is True:
+                self.angle = self.angle + self.resolution
                 GPIO.output(self.dir_p, GPIO.LOW)
             else:
                 GPIO.output(self.dir_p, GPIO.HIGH)
+                self.angle = self.angle - self.resolution
             GPIO.output(self.enable_p, GPIO.LOW)
             GPIO.output(self.step_p, GPIO.HIGH)
             time.sleep(self.period)
