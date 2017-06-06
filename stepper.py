@@ -5,7 +5,7 @@ import math
 # using BeagleBone Black. jcarthew@ford.com
 
 class Stepper():
-    def __init__(self, enable_p="P8_14", step_p="P8_15", dir_p="P8_16", steps=200):
+    def __init__(self, enable_p="P8_7", step_p="P8_8", dir_p="P8_9", steps=200):
         self.angle = 0
         self.stpr_steps = steps
         self.enable_p = enable_p
@@ -17,6 +17,7 @@ class Stepper():
         self.angle = 0.0
         self.resolution = 360/steps
         self.angle = 0.0
+        self.next_step = time.time()
 
     def set_rpm(self, rpm):
         self.period = 60.0 / (self.stpr_steps * rpm)
@@ -47,6 +48,7 @@ class Stepper():
                 GPIO.output(self.dir_p, GPIO.HIGH)
                 self.angle = self.angle - self.resolution
             GPIO.output(self.enable_p, GPIO.LOW)
-            GPIO.output(self.step_p, GPIO.HIGH)
-            time.sleep(self.period)
-            GPIO.output(self.step_p, GPIO.LOW)
+            if time.time() - self.next_step > self.period:
+                GPIO.output(self.step_p, GPIO.HIGH)
+                GPIO.output(self.step_p, GPIO.LOW)
+                self.next_step = time.time() + self.period

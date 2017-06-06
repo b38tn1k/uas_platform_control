@@ -19,11 +19,11 @@ import time
 #    old_switch_state = new_switch_state
 
 class Button():
-    def __init__(self, pin="P8_12"):
+    def __init__(self, pin="P8_24"):
         self.pin = pin
-        GPIO.setup("P8_12", GPIO.IN)
+        GPIO.setup(pin, GPIO.IN)
 
-    def is_down(self):
+    def is_down(self): 
         status =  GPIO.input(self.pin) 
         return(bool(status))
 

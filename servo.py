@@ -5,7 +5,7 @@ import time
 # jcarthew@ford.com
 
 class Servo():
-    def __init__(self, pin="P8_13", duty_min=3, duty_max=14.5, speed=50):
+    def __init__(self, pin="P8_20", duty_min=3, duty_max=14.5, speed=50):
         self.pin = pin
         self.duty_min = duty_min
         self.duty_max = duty_max
