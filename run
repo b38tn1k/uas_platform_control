@@ -39,8 +39,8 @@ buttons.append(Button("P8_27"))
 
 # Server Setup
 config = PNConfiguration()
-config.publish_key = 'demo'
-config.subscribe_key = 'demo'
+config.publish_key = PUB_KEY
+config.subscribe_key = SUB_KEY
 server = PubNub(config)
 server.subscribe().channels(CHANNEL).execute()
 
