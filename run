@@ -4,6 +4,15 @@ from stepper import Stepper
 from button import Button
 from servo import Servo
 from arm import Arm
+from pubnub.callbacks import SubscribeCallback
+from pubnub.pnconfiguration import PNConfiguration
+from pubnub.enums import PNStatusCategory
+from pubnub.pubnub import PubNub
+
+PUB_KEY = "pub-c-5c6126b2-8d79-471b-9145-d5559ff0e33e"
+SUB_KEY = "sub-c-21d50076-5211-11e7-b7ac-02ee2ddab7fe"
+CHANNEL = "drone-delivery"
+
 # Stepper Setup
 steppers = []
 steppers.append(Stepper())
@@ -13,24 +22,57 @@ steppers.append(Stepper(enable_p = "P8_17", step_p = "P8_18", dir_p = "P8_19"))
 for stepper in steppers:
     stepper.setup()
     stepper.set_rpm(300)
+
 # Servo Setup
 servos = []
 servos.append(Servo())
 servos.append(Servo(pin = "P8_21"))
 servos.append(Servo(pin = "P8_22"))
 servos.append(Servo(pin = "P8_23"))
+
 # Button Setup
 buttons = []
 buttons.append(Button())
 buttons.append(Button("P8_25"))
 buttons.append(Button("P8_26"))
 buttons.append(Button("P8_27"))
-while True:
-    for i in range(2000):
-        for stepper in steppers:
-            stepper.step()
-    print("Change Places!")
-    for stepper in steppers:
-        stepper.forwards = not stepper.forwards
+
+# Server Setup
+config = PNConfiguration()
+config.publish_key = 'demo'
+config.subscribe_key = 'demo'
+server = PubNub(config)
+server.subscribe().channels(CHANNEL).execute()
+
+class SubCallback(SubscribeCallback):
+    def message(self, pubnub, message):
+    	data = message.message
+    	print data 	#send data here as dictionary {dev: "centering", cmd: "go"}
+    	if data.dev == "centering":
+			server.publish().channel(CHANNEL).message("Centering mechanism activated")
+    		if data.cmd == "go":
+    			for i in range(2000):
+        			for stepper in steppers:
+            			stepper.step()
+    			server.publish().channel(CHANNEL).message("Steppers in position")
+    		elif data.cmd == "reset":
+    			for stepper in steppers:
+        		stepper.forwards = not stepper.forwards
+        		server.publish().channel(CHANNEL).message("Steppers reset")
+
+    def status(self, pubnub, status):
+        if status.category == PNStatusCategory.PNUnexpectedDisconnectCategory:
+        	print "ERROR: Connectivity lost"
+        elif status.category == PNStatusCategory.PNConnectedCategory:
+            server.publish().channel(CHANNEL).message("Centering mechanism online")
+        elif status.category == PNStatusCategory.PNReconnectedCategory:
+        	print "WARNING: Reconnected"
+        elif status.category == PNStatusCategory.PNDecryptionErrorCategory:
+        	print "ERROR: Decryption error"
+ 
+    def presence(self, pubnub, presence):
+    	print "PRESENCE: " + presence
+  
+server.add_listener(SubCallback())
     
 
