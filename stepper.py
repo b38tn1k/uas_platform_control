@@ -1,6 +1,7 @@
 import Adafruit_BBIO.GPIO as GPIO
 import time
 import math
+import threading
 # Use this to drive the reprap stepstick stepper motor driver
 # using BeagleBone Black. jcarthew@ford.com
 
@@ -18,9 +19,10 @@ class Stepper():
         self.resolution = 360/steps
         self.angle = 0.0
         self.next_step = time.time()
+        self.threads = []
 
     def set_rpm(self, rpm):
-        self.period = 60.0 / (self.stpr_steps * rpm)
+        self.period = 60.0 / (2 * self.stpr_steps * rpm)
 
     def zero(self):
         self.angle = 0.0
@@ -47,8 +49,36 @@ class Stepper():
             else:
                 GPIO.output(self.dir_p, GPIO.HIGH)
                 self.angle = self.angle - self.resolution
+            self.pulse()
             GPIO.output(self.enable_p, GPIO.LOW)
-            if time.time() - self.next_step > self.period:
-                GPIO.output(self.step_p, GPIO.HIGH)
-                GPIO.output(self.step_p, GPIO.LOW)
-                self.next_step = time.time() + self.period
+
+    def pulse(self):
+        self.timer(self.pulse_high)
+        self.timer(self.pulse_low)
+
+    def blocking_step(self):
+        self.pulse_high()
+        time.sleep(self.period)
+        self.pulse_low()
+        time.sleep(self.period)
+
+    def thread_step(self):
+        t = threading.Thread(target=self.blocking_step)
+        self.threads.append(t)
+        t.start()
+
+    def pulse_high(self):
+        GPIO.output(self.step_p, GPIO.HIGH)
+
+    def pulse_low(self):
+        GPIO.output(self.step_p, GPIO.LOW)
+
+    def timer(self, func):
+        now = time.time()*1000
+        if now - self.next_step > self.period:
+            func()
+            self.next_step = now + self.period
+            print("YAY")
+        print(now)
+        
+
