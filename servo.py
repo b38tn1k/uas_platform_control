@@ -18,7 +18,6 @@ class Servo():
         duty = 100 - ((float(self.speed) / 180) * self.duty_span + self.duty_min)
         PWM.set_duty_cycle(self.pin, duty)
 
-
     def setup(self):
         if self.active is False:
             PWM.start(self.pin, (100 - self.duty_min), 60.0)
