@@ -3,10 +3,10 @@ import Adafruit_BBIO.PWM as PWM
 import time
 import math
 # Use this to drive the reprap stepstick stepper motor driver
-# using BeagleBone Black. jcarthew@ford.com
+# using BeagleBone Black. Use a 5V pull-up resistor! jcarthew@ford.com
 
 class Stepper():
-    def __init__(self, enable_p="P8_7", step_p="P8_8", dir_p="P8_9", steps=200):
+    def __init__(self, enable_p="P8_10", step_p="P8_13", dir_p="P8_12", steps=200):
         # Pins
         PWM.stop(step_p)
         GPIO.setup(enable_p, GPIO.OUT)
@@ -18,10 +18,9 @@ class Stepper():
         self.stpr_steps = steps
         self.resolution = 360/steps
         # Time Vars
-        self.frequency = 100
+        self.frequency = 200
         # Model
-        self.active = False
-        self.angle = 0.0
+        self.rps = 1
 
     def drive(self, clockwise=True):
         if self.frequency <= 0:
@@ -30,7 +29,7 @@ class Stepper():
             # Disable the Stepper
             GPIO.output(self.enable_p, GPIO.HIGH)
             # Send the Step wave
-            PWM.start(self.step_p, 50, self.frequency, 1)
+            PWM.start(self.step_p, 50, self.frequency, 1) # Magic Numbers: 50% duty, normal polarity
             # Set the Direction
             if clockwise is True:
                 GPIO.output(self.dir_p, GPIO.LOW)
@@ -38,6 +37,14 @@ class Stepper():
                 GPIO.output(self.dir_p, GPIO.HIGH)
             # Enable the Stepper
             GPIO.output(self.enable_p, GPIO.LOW)
+
+    def stop(self):
+        PWM.stop(self.step_p)
+        PWM.cleanup()
+
+    def set_rps(self, rps):
+        self.rps = rps
+        self.frequency = self.stpr_steps * rps
 
 
 
