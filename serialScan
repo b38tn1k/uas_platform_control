@@ -1,0 +1,16 @@
+ls /dev > plugged
+echo 'now unplug Serial'
+sleep 1
+echo 5
+sleep 1
+echo 4
+sleep 1
+echo 3
+sleep 1
+echo 2
+sleep 1
+echo 1
+echo 'new serial port is'
+ls /dev > unplugged
+diff plugged unplugged
+rm plugged unplugged
