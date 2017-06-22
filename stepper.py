@@ -2,6 +2,7 @@ import Adafruit_BBIO.GPIO as GPIO
 import Adafruit_BBIO.PWM as PWM
 import time
 import math
+import threading
 # Use this to drive the reprap stepstick stepper motor driver
 # using BeagleBone Black. Use a 5V pull-up resistor! jcarthew@ford.com
 
@@ -15,7 +16,7 @@ class Stepper():
         self.step_p = step_p
         self.dir_p = dir_p
         # Stepper Characteristics
-        self.stpr_steps = steps
+        self.steps = steps
         self.resolution = 360/steps
         # Time Vars
         self.frequency = 200
@@ -38,13 +39,31 @@ class Stepper():
             # Enable the Stepper
             GPIO.output(self.enable_p, GPIO.LOW)
 
+    def move_to_angle(self, angle):
+        ''' Calculate the approx time to move
+        to desired angle. create a timed thread 
+        that will kill pwm after that amount of
+        time. fire the thread. start moving '''
+        number_of_steps = (float(angle) / 360.0) * self.steps
+        time_required = float(number_of_steps / self.frequency)
+        print time_required
+        t = threading.Timer(time_required, self.kill_pwm)
+        if angle < 0:
+            self.drive(False)
+        else:
+            self.drive()
+        t.start()
+
+    def kill_pwm(self):
+        PWM.stop(self.step_p)
+    
     def stop(self):
         PWM.stop(self.step_p)
         PWM.cleanup()
 
     def set_rps(self, rps):
         self.rps = rps
-        self.frequency = self.stpr_steps * rps
+        self.frequency = self.steps * rps
 
 
 

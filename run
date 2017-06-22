@@ -28,7 +28,7 @@ buttons.append(Button("P8_27"))
 '''
 while True:
     steppers[0].frequency = float(raw_input("set freq: "))
-    steppers[0].drive()
+    steppers[0].drive(False)
     
 
 
