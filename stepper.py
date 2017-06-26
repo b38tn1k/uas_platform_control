@@ -23,6 +23,9 @@ class Stepper():
         # Model
         self.rps = 1
 
+    def __del__(self):
+        self.stop()
+
     def drive(self, clockwise=True):
         if self.frequency <= 0:
             PWM.stop(self.step_p)
