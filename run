@@ -43,6 +43,7 @@ config.publish_key = PUB_KEY
 config.subscribe_key = SUB_KEY
 server = PubNub(config)
 server.subscribe().channels(CHANNEL).execute()
+server.publish().channel(CHANNEL).message("Connected!")
 
 class SubCallback(SubscribeCallback):
     def message(self, pubnub, message):
