@@ -47,12 +47,14 @@ class SubCallback(SubscribeCallback):
     def message(self, pubnub, message):
         data = message.message
         print data 	#send data here as dictionary {dev: "centering", cmd: "go"}
-        if data.dev == "centering":
+        if data["dev"] == "centering":
             server.publish().channel(CHANNEL).message("Centering mechanism activated")
-        if data.cmd == "go":
+        if data["cmd"]  == "go":
+            print("Drive")
             stp.drive()
+            print("stp.Drive")
             server.publish().channel(CHANNEL).message("Steppers in position")
-        elif data.cmd == "reset":
+        elif data["cmd"] == "reset":
             stp.stop()
             server.publish().channel(CHANNEL).message("Steppers reset")
 
