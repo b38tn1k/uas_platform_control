@@ -11,7 +11,7 @@ html5lib==0.999
 ipython==2.3.0
 itsdangerous==0.24
 iw-parse==0.0.2
-Jinja2==2.7.3
+Jinja2==2.11.3
 logilab-common==0.62.0
 MarkupSafe==0.23
 ndg-httpsclient==0.3.2
