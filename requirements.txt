@@ -30,5 +30,5 @@ serbus==1.0.5
 simplegeneric==0.8.1
 six==1.8.0
 smbus==1.1
-urllib3==1.9.1
+urllib3==1.26.5
 Werkzeug==0.9.6
