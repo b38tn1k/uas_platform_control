@@ -7,7 +7,7 @@ colorama==0.3.2
 cryptography==0.6.1
 decorator==3.4.0
 Flask==0.10.1
-html5lib==0.999
+html5lib==0.999999999
 ipython==2.3.0
 itsdangerous==0.24
 iw-parse==0.0.2
