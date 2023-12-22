@@ -4,6 +4,14 @@ from servo import Servo
 
 class Arm():
     def __init__(self, a_button, a_stepper, a_servo):
+        """
+
+        Args:
+            a_button ():
+            a_stepper ():
+            a_servo ():
+
+        """
         self.button = a_button
         self.stepper = a_stepper
         self.stepper.setup()
@@ -11,6 +19,9 @@ class Arm():
         #self.servo.setup() # it starts running asap. added setup to the run function
 
     def undeploy(self):
+        """
+
+        """
         self.stepper.forwards = False
         while True:
             self.stepper.step()
@@ -20,6 +31,9 @@ class Arm():
         self.stepper.forwards = True
 
     def deploy(self):
+        """
+
+        """
         self.stepper.rotate_an_arbitrary_angle(90)
 
 
